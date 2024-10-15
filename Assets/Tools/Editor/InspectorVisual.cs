@@ -1,23 +1,33 @@
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(ButtonText))]
+[CustomEditor(typeof(MonoBehaviour), true)]
 public class InspectorVisual : Editor
 {
     public override void OnInspectorGUI()
     {
-        ButtonText buttonText = (ButtonText) target;
+        MonoBehaviour targetObject = (MonoBehaviour) target;
 
         DrawDefaultInspector();
 
-        if (GUILayout.Button("Get Data"))
+        if (targetObject is ButtonText buttonText)
         {
-            buttonText.GetButtons();
+            CreateInspectorButton("Get Data", () => buttonText.GetButtons());
+            CreateInspectorButton("Clear", () => buttonText.ClearButtons());
         }
-        
-        if (GUILayout.Button("Clear"))
+
+        if (targetObject is Text text)
         {
-            buttonText.ClearButtons();
+            CreateInspectorButton("Get Data", () => text.GetText());
+            CreateInspectorButton("Clear", () => text.ClearText());
+        }
+    }
+
+    private void CreateInspectorButton(string text, System.Action action)
+    {
+        if (GUILayout.Button(text))
+        {
+            action?.Invoke();
         }
     }
 }
